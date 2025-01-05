@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -20,7 +19,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("AlarmReceiver", "提醒接收成功");
+        // Log.d("AlarmReceiver", "提醒接收成功");
 
         // 點擊通知後，啟動日記的主頁面
         Intent notifyIntent = new Intent(context, MainActivity.class);
