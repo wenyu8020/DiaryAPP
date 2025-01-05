@@ -27,6 +27,11 @@
             android:title="Pomodoro"/>
 
         <item
+            android:id="@+id/nav_reminder"
+            android:icon="@drawable/nav_reminder"
+            android:title="Reminder"/>
+
+        <item
             android:id="@+id/nav_share"
             android:icon="@drawable/nav_share"
             android:title="Share"/>

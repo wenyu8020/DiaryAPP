@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ShareFragment()).commit();
         } else if (itemId == R.id.nav_pomodoro) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PomodoroFragment()).commit();
+        } else if (itemId == R.id.nav_reminder) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReminderFragment()).commit();
         } else if (itemId == R.id.nav_logout) {
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
         }
