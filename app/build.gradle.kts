@@ -1,3 +1,5 @@
+import com.android.builder.files.classpathToRelativeFileSet
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
@@ -39,8 +41,13 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
+    implementation(libs.play.services)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.glide)
+    implementation(libs.play.services.auth)
+//    implementation(com.google.android.gms:play-)
+//    implementation(com.google.android.gms:play-services-auth:20.7.0)
 
 }
