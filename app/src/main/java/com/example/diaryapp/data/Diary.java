@@ -10,9 +10,12 @@ public class Diary {
     private String title;
     private String content;
 
-    public Diary(String title, String content) {
+    private String date; // 新增日期字段
+
+    public Diary(String title, String content, String date) {
         this.title = title;
         this.content = content;
+        this.date = date;
     }
 
     public int getId() {
@@ -29,6 +32,9 @@ public class Diary {
 
     public String getContent() {
         return content;
+    }
+    public String getDate() {
+        return date;
     }
 }
 

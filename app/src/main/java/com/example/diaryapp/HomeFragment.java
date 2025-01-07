@@ -29,10 +29,8 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // 加載 fragment_home.xml 作為主頁佈局
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // 獲取佈局中的元件
         ListView listView = view.findViewById(R.id.diary_list);
         Button addButton = view.findViewById(R.id.add_diary_button);
 
@@ -43,16 +41,17 @@ public class HomeFragment extends Fragment {
         // 初始化 ViewModel
         diaryViewModel = new ViewModelProvider(this).get(DiaryViewModel.class);
 
-        // 觀察日記數據變化並更新列表
+        // 觀察日記數據變化
         diaryViewModel.getAllDiaries().observe(getViewLifecycleOwner(), new Observer<List<Diary>>() {
             @Override
             public void onChanged(List<Diary> diaries) {
-                List<String> titles = new ArrayList<>();
+                List<String> displayList = new ArrayList<>();
                 for (Diary diary : diaries) {
-                    titles.add(diary.getTitle());
+                    String displayText = diary.getDate() + "\n" + diary.getTitle(); // 日期 + 標題
+                    displayList.add(displayText);
                 }
                 adapter.clear();
-                adapter.addAll(titles);
+                adapter.addAll(displayList);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -67,7 +66,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // 點擊新增按鈕進入新增日記頁面
+        // 點擊新增日記按鈕
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(requireActivity(), AddEditDiaryActivity.class);
             startActivity(intent);

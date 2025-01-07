@@ -6,6 +6,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <EditText
+        android:id="@+id/edit_date"
+        android:layout_width="match_parent"
+        android:layout_height="67dp"
+        android:focusable="false"
+        android:hint="選擇日期"
+        android:inputType="none" />
+
+
     <!-- 標題輸入框 -->
     <EditText
         android:id="@+id/edit_title"
