@@ -1,16 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingFragment">
+    android:padding="16dp"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="setting fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-</RelativeLayout>
+
+        <!-- 頭像 -->
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_profile_placeholder" /> <!-- 預設圖片 -->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:layout_marginBottom="16dp"-->
+<!--            android:background="@drawable/circle_background" &lt;!&ndash; 圓形背景 &ndash;&gt;-->
+<!--            android:contentDescription="Profile Picture" />-->
+
+
+        <!-- 按鈕更換頭像 -->
+        <Button
+            android:id="@+id/btn_change_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="更換頭像" />
+
+
+        <!-- 姓名 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="姓名"
+            android:textSize="18sp"
+            android:layout_marginTop="24dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="輸入姓名"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edittext_background" />
+
+
+        <!-- 生日 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="生日"
+            android:textSize="18sp"
+            android:layout_marginTop="24dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
+
+        <EditText
+            android:id="@+id/et_birthday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="輸入生日 (YYYY-MM-DD)"
+            android:padding="12dp"
+            android:inputType="date"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edittext_background" />
+
+
+        <!-- 儲存按鈕 -->
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="儲存"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="#7B7B7B" />
+
+
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+</ScrollView>
+
+
+
+
+
