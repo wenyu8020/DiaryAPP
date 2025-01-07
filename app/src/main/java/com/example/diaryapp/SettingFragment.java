@@ -24,12 +24,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-
-import java.util.UUID;
 
 
 public class SettingFragment extends Fragment {
@@ -41,9 +35,10 @@ public class SettingFragment extends Fragment {
     private EditText etName, etBirthday;
     private ImageView profileImage;
     private Button btnSave, btnChangePicture;
+
+
     private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
-    private StorageReference storageReference;
     private Uri imageUri;
 
 
@@ -57,7 +52,6 @@ public class SettingFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("users");
-        storageReference = FirebaseStorage.getInstance().getReference("profile_pictures");
 
 
         // 初始化 UI 元件
@@ -84,10 +78,24 @@ public class SettingFragment extends Fragment {
     }
 
 
+//    private void openFileChooser() {
+//        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+//    }
     private void openFileChooser() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        // 指定 Picture 資料夾
+        Uri pictureDirUri = Uri.parse("content://media/external/images/media");
+        intent.setDataAndType(pictureDirUri, "image/*");
+        startActivityForResult(Intent.createChooser(intent, "選擇圖片"), PICK_IMAGE_REQUEST);
     }
+
+
+
+
+
+
 
 
     @Override
@@ -100,34 +108,41 @@ public class SettingFragment extends Fragment {
             profileImage.setImageURI(imageUri);
 
 
-            uploadImageToFirebase();
+            // 在更新新的 Uri 前刪除原本的 profileUri
+            deleteOldProfileUriAndSaveNew();
         }
     }
 
 
-    private void uploadImageToFirebase() {
-        if (imageUri != null) {
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            if (currentUser == null) {
-                Toast.makeText(getContext(), "請先登入", Toast.LENGTH_SHORT).show();
-                return;
-            }
+    private void deleteOldProfileUriAndSaveNew() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "請先登入", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
 
-            String userId = currentUser.getUid();
-            String fileName = UUID.randomUUID().toString(); // 為文件生成唯一名稱
-            StorageReference fileReference = storageReference.child(userId).child(fileName);
+        String userId = currentUser.getUid();
 
 
-            fileReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-                fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                    // 更新 Firebase Database 中的頭像 URL
-                    databaseReference.child(userId).child("profileUrl").setValue(uri.toString());
-                    Toast.makeText(getContext(), "頭像更新成功", Toast.LENGTH_SHORT).show();
+        // 先刪除舊的 profileUri
+        databaseReference.child(userId).child("profileUri").removeValue()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // 再儲存新的 profileUri
+                        saveLocalImageUri(userId);
+                    } else {
+                        Toast.makeText(getContext(), "刪除舊頭像失敗：" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 });
-            }).addOnFailureListener(e -> {
-                Toast.makeText(getContext(), "頭像更新失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
+    }
+
+
+    private void saveLocalImageUri(String userId) {
+        if (imageUri != null) {
+            databaseReference.child(userId).child("profileUri").setValue(imageUri.toString())
+                    .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "頭像更新成功", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(getContext(), "頭像更新失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show());
         } else {
             Toast.makeText(getContext(), "未選擇圖片", Toast.LENGTH_SHORT).show();
         }
@@ -150,15 +165,15 @@ public class SettingFragment extends Fragment {
             if (task.isSuccessful() && task.getResult().exists()) {
                 String name = task.getResult().child("name").getValue(String.class);
                 String birthday = task.getResult().child("birthday").getValue(String.class);
-                String profileUrl = task.getResult().child("profileUrl").getValue(String.class);
+                String profileUri = task.getResult().child("profileUri").getValue(String.class);
 
 
                 etName.setText(name);
                 etBirthday.setText(birthday);
 
 
-                if (profileUrl != null) {
-                    Glide.with(this).load(profileUrl).into(profileImage);
+                if (profileUri != null) {
+                    Glide.with(this).load(Uri.parse(profileUri)).into(profileImage);
                 } else {
                     profileImage.setImageResource(R.drawable.ic_profile_placeholder); // 預設圖片
                 }
