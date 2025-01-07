@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,12 +26,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private DiaryAdapter diaryAdapter;
     private List<Diary> diaryList;
+    private List<Diary> filteredDiaryList;
     private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
 
@@ -48,25 +51,41 @@ public class HomeFragment extends Fragment {
             return view;
         }
 
-        // 設置 RecyclerView
+        // 初始化 RecyclerView
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         diaryList = new ArrayList<>();
-        diaryAdapter = new DiaryAdapter(diaryList, this::onDiaryClicked);
+        filteredDiaryList = new ArrayList<>();
+        diaryAdapter = new DiaryAdapter(filteredDiaryList, this::onDiaryClicked);
         recyclerView.setAdapter(diaryAdapter);
 
-        // Firebase Realtime Database 參考
+        // 初始化 Firebase Realtime Database 參考
         String userId = currentUser.getUid();
         databaseReference = FirebaseDatabase.getInstance().getReference("users").child(userId).child("diaries");
 
-        // 從 Firebase 加載日記
+        // 加載日記資料
         loadDiariesFromFirebase();
+
+        // 搜尋欄
+        SearchView searchView = view.findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterDiaries(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterDiaries(newText);
+                return false;
+            }
+        });
 
         // 新增日記按鈕
         Button btnAddDiary = view.findViewById(R.id.btn_add_diary);
         btnAddDiary.setOnClickListener(v -> {
-            // 跳轉到 DiaryFragment
             requireActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new DiaryFragment())
                     .addToBackStack(null)
@@ -80,7 +99,7 @@ public class HomeFragment extends Fragment {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                diaryList.clear(); // 清空舊的列表
+                diaryList.clear(); // 清空舊資料
 
                 for (DataSnapshot diarySnapshot : snapshot.getChildren()) {
                     Diary diary = diarySnapshot.getValue(Diary.class);
@@ -90,7 +109,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
-                diaryAdapter.notifyDataSetChanged(); // 通知 Adapter 資料已更新
+                filterDiaries(""); // 預設顯示所有日記
             }
 
             @Override
@@ -98,6 +117,21 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(), "無法加載日記：" + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void filterDiaries(String query) {
+        filteredDiaryList.clear();
+
+        // 以標題進行篩選
+        if (query.isEmpty()) {
+            filteredDiaryList.addAll(diaryList);
+        } else {
+            filteredDiaryList.addAll(diaryList.stream()
+                    .filter(diary -> diary.getSubject() != null && diary.getSubject().toLowerCase().contains(query.toLowerCase()))
+                    .collect(Collectors.toList()));
+        }
+
+        diaryAdapter.notifyDataSetChanged(); // 更新 RecyclerView
     }
 
     private void onDiaryClicked(Diary diary) {
@@ -116,6 +150,3 @@ public class HomeFragment extends Fragment {
                 .commit();
     }
 }
-
-
-
