@@ -7,15 +7,22 @@ import androidx.room.PrimaryKey;
 public class Diary {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private String title;
-    private String content;
+    String title;
+    String content;
 
-    private String date; // 新增日期字段
+    String date; // 新增日期字段
 
-    public Diary(String title, String content, String date) {
+    String imageUri; // 新增圖片字段
+
+    public Diary(String title, String content, String date, String imageUriString) {
         this.title = title;
         this.content = content;
         this.date = date;
+        this.imageUri = imageUri;
+    }
+
+    public Diary() {
+
     }
 
     public int getId() {
@@ -35,6 +42,10 @@ public class Diary {
     }
     public String getDate() {
         return date;
+    }
+
+    public String getImageUri() {
+        return imageUri;
     }
 }
 

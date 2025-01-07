@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Diary.class}, version = 3, exportSchema = false) // 將版本號從 1 改為 2
+@Database(entities = {Diary.class}, version = 6, exportSchema = false) // 將版本號從 1 改為 2
 public abstract class DiaryDatabase extends RoomDatabase {
     private static DiaryDatabase instance;
 
