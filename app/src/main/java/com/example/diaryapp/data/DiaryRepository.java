@@ -9,13 +9,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DiaryRepository {
-
     private final DiaryDao diaryDao;
     private final LiveData<List<Diary>> allDiaries;
     private final ExecutorService executorService;
 
     public DiaryRepository(Application application) {
-        DiaryDatabase database = DiaryDatabase.getDatabase(application);
+        DiaryDatabase database = DiaryDatabase.getInstance(application);
         diaryDao = database.diaryDao();
         allDiaries = diaryDao.getAllDiaries();
         executorService = Executors.newSingleThreadExecutor();
@@ -27,5 +26,9 @@ public class DiaryRepository {
 
     public void insert(Diary diary) {
         executorService.execute(() -> diaryDao.insert(diary));
+    }
+
+    public void update(Diary diary) {
+        executorService.execute(() -> diaryDao.update(diary));
     }
 }

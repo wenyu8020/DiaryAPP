@@ -6,24 +6,28 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- 標題輸入框 -->
     <EditText
         android:id="@+id/edit_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:hint="輸入標題" />
 
+    <!-- 內容輸入框 -->
     <EditText
         android:id="@+id/edit_content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="500dp"
         android:layout_weight="1"
-        android:hint="輸入內容"
         android:gravity="top"
+        android:hint="輸入內容"
         android:inputType="textMultiLine" />
 
+    <!-- 保存按鈕 -->
     <Button
         android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="保存" />
 </LinearLayout>
+

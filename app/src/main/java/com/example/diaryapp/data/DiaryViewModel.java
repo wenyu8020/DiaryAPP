@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class DiaryViewModel extends AndroidViewModel {
-
     private final DiaryRepository repository;
     private final LiveData<List<Diary>> allDiaries;
 
@@ -24,5 +23,9 @@ public class DiaryViewModel extends AndroidViewModel {
 
     public void insert(Diary diary) {
         repository.insert(diary);
+    }
+
+    public void update(Diary diary) {
+        repository.update(diary);
     }
 }

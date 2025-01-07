@@ -5,17 +5,14 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "diary_table")
 public class Diary {
-
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
     private String content;
-    private String date;
 
-    public Diary(String title, String content, String date) {
+    public Diary(String title, String content) {
         this.title = title;
         this.content = content;
-        this.date = date;
     }
 
     public int getId() {
@@ -33,8 +30,5 @@ public class Diary {
     public String getContent() {
         return content;
     }
-
-    public String getDate() {
-        return date;
-    }
 }
+
