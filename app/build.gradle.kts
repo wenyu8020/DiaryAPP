@@ -40,6 +40,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.navigation.fragment)
+    implementation(libs.room.common)
+    implementation(libs.room.runtime)
     testImplementation(libs.junit)
 
 //    implementation(libs.play.services)
@@ -61,5 +64,8 @@ dependencies {
     implementation(libs.glide)
 //    implementation(com.google.android.gms:play-)
 //    implementation(com.google.android.gms:play-services-auth:20.7.0)
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+    annotationProcessor(libs.room.compiler) // 必須包含此依賴
 
 }

@@ -14,6 +14,10 @@ firebaseAuth = "23.1.0"
 playServices = "12.0.1"
 playServicesAuth = "21.3.0"
 firebaseDatabase = "21.0.0"
+navigationFragment = "2.8.5"
+roomCommon = "2.6.1"
+roomRuntime = "2.6.1"
+roomCompiler = "2.6.1"
 
 [libraries]
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -30,6 +34,10 @@ glide = {module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 play-services = { group = "com.google.android.gms", name = "play-services", version.ref = "playServices" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
