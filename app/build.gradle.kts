@@ -1,3 +1,5 @@
+import com.android.builder.files.classpathToRelativeFileSet
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
@@ -38,9 +40,26 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
+
+//    implementation(libs.play.services)
+    implementation(libs.play.services.auth)
+
+//    implementation(com.google.firebase:firebase-storage)
+//    implementation platform(libs.firebase.fi)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
+//    implementation("com.google.firebase:firebase-database")
+//    implementation 'com.google.firebase:firebase-auth'
+
+//    implementation("com.google.android.gms:play-services-auth:20.7.0")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.glide)
+//    implementation(com.google.android.gms:play-)
+//    implementation(com.google.android.gms:play-services-auth:20.7.0)
 
 }

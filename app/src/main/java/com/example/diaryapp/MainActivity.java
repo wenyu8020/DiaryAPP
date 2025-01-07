@@ -1,5 +1,6 @@
 package com.example.diaryapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 // 導航欄
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -73,7 +75,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (itemId == R.id.nav_reminder) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ReminderFragment()).commit();
         } else if (itemId == R.id.nav_logout) {
+            // 顯示登出訊息並logout from firebase
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+
+            // 跳轉回去登入頁面
+            Intent intent = new Intent(MainActivity.this, ActivityLogin.class);
+            startActivity(intent);
+            finish();
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
