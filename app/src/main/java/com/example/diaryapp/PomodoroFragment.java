@@ -24,6 +24,7 @@ public class PomodoroFragment extends Fragment {
     private TextView tvTimeLeft;
     private ProgressBar pbTimer;
     private Button btnPlayPause;
+    private TextView tvWorkRestStatus; // 新增 TextView 顯示工作/休息狀態
     private CountDownTimer timer;
     private boolean isRunning = false;
     private boolean isWorkTime = true; // 標記是否為工作時間
@@ -38,6 +39,7 @@ public class PomodoroFragment extends Fragment {
         tvTimeLeft = view.findViewById(R.id.tvTimeLeft);
         pbTimer = view.findViewById(R.id.pbTimer);
         btnPlayPause = view.findViewById(R.id.btnPlayPause);
+        tvWorkRestStatus = view.findViewById(R.id.tvWorkRestStatus); // 取得狀態顯示的 TextView
 
         pbTimer.setMax((int) (WORK_TIME / 1000)); // 設定進度條的最大值
 
@@ -74,10 +76,12 @@ public class PomodoroFragment extends Fragment {
                     isWorkTime = false; // 切換到休息階段
                     timeLeftInMillis = REST_TIME;
                     pbTimer.setMax((int) (REST_TIME / 1000)); // 重設進度條最大值
+                    tvWorkRestStatus.setText("休息中"); // 更新顯示為休息中
                 } else {
                     isWorkTime = true; // 切換到工作階段
                     timeLeftInMillis = WORK_TIME;
                     pbTimer.setMax((int) (WORK_TIME / 1000)); // 重設進度條最大值
+                    tvWorkRestStatus.setText("工作中"); // 更新顯示為工作中
                 }
 
                 updateTimerText();
@@ -115,3 +119,4 @@ public class PomodoroFragment extends Fragment {
         }
     }
 }
+

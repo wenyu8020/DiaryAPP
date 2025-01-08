@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -46,6 +45,17 @@
                 android:textStyle="bold"
                 android:textSize="26sp"
                 android:textColor="@color/lavender"
+                android:gravity="center" />
+
+            <!-- 新增顯示工作狀態的 TextView -->
+            <TextView
+                android:id="@+id/tvWorkRestStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="工作中"
+                android:textSize="20sp"
+                android:textColor="@color/lavender"
+                android:layout_marginTop="16dp"
                 android:gravity="center" />
 
         </LinearLayout>
