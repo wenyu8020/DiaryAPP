@@ -1,12 +1,11 @@
 package com.example.diaryapp;
 
-import android.Manifest;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -62,7 +61,7 @@ public class AddEditDiaryActivity extends AppCompatActivity {
         dateEditText.setOnClickListener(v -> showDatePicker());
 
         // 設置選擇圖片按鈕
-        selectImageButton.setOnClickListener(v -> openFilePicker());
+        selectImageButton.setOnClickListener(v -> showImageSelectionDialog());
 
         // 設置保存按鈕
         saveButton.setOnClickListener(v -> saveDiary());
@@ -99,6 +98,39 @@ public class AddEditDiaryActivity extends AppCompatActivity {
         }, year, month, day).show();
     }
 
+    // 顯示圖片選擇選單
+    private void showImageSelectionDialog() {
+        String[] options = {"從預設圖片中選擇", "從本地存儲中選擇"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("選擇圖片")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        showPresetImageDialog(); // 預設圖片選擇
+                    } else if (which == 1) {
+                        openFilePicker(); // 本地存儲選擇
+                    }
+                })
+                .show();
+    }
+
+    // 顯示預設圖片的選單
+    private void showPresetImageDialog() {
+        // 預設圖片資源 ID
+        int[] presetImages = {R.drawable.sample_spring, R.drawable.sample_summer, R.drawable.sample_autumn, R.drawable.sample_winter};
+
+        // 預設圖片的名稱
+        String[] imageNames = {"春", "夏", "秋", "冬"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("選擇一張預設圖片")
+                .setItems(imageNames, (dialog, which) -> {
+                    int selectedImageResId = presetImages[which];
+                    savePresetImageToInternalStorage(selectedImageResId);
+                })
+                .show();
+    }
+
     // 打開文件選擇器
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -121,6 +153,29 @@ public class AddEditDiaryActivity extends AppCompatActivity {
                     Toast.makeText(this, "無法保存圖片", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+    }
+
+    // 保存預設圖片到內部存儲
+    private void savePresetImageToInternalStorage(int imageResId) {
+        try {
+            // 從資源中加載圖片
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imageResId);
+
+            // 創建文件名
+            String fileName = "IMG_PRESET_" + System.currentTimeMillis() + ".jpg";
+            File directory = getFilesDir();
+            File file = new File(directory, fileName);
+
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.close();
+
+            selectedImagePath = file.getAbsolutePath(); // 保存路徑
+            imagePreview.setImageURI(Uri.fromFile(file)); // 預覽圖片
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "無法保存預設圖片", Toast.LENGTH_SHORT).show();
         }
     }
 
