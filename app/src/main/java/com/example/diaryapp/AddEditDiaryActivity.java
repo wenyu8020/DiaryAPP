@@ -5,6 +5,10 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.diaryapp.data.Diary;
@@ -65,6 +70,16 @@ public class AddEditDiaryActivity extends AppCompatActivity {
 
         // 設置保存按鈕
         saveButton.setOnClickListener(v -> saveDiary());
+
+        // 設置分享按鈕
+        Button shareButton = findViewById(R.id.share_button);
+        shareButton.setOnClickListener(v -> {
+            if (selectedImagePath != null) {
+                shareDiaryWithImage();  // 如果有圖片，分享文字和圖片
+            } else {
+                shareDiaryText();  // 否則只分享文字
+            }
+        });
 
         // 如果是編輯模式，載入現有日記數據
         if (getIntent().hasExtra("diaryId")) {
@@ -220,6 +235,105 @@ public class AddEditDiaryActivity extends AppCompatActivity {
         }
 
         finish();
+    }
+
+    private void shareDiaryText() {
+        String title = titleEditText.getText().toString();
+        String content = contentEditText.getText().toString();
+        String date = dateEditText.getText().toString();
+
+        // 構建分享內容
+        String diaryText = "日記標題: " + title + "\n" +
+                "日期: " + date + "\n" +
+                "內容: \n" + content;
+
+        // 建立 Intent 來分享文字
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, diaryText);
+
+        // 開啟選擇應用的介面
+        startActivity(Intent.createChooser(shareIntent, "選擇應用程式"));
+    }
+
+    private void shareDiaryWithImage() {
+        String title = titleEditText.getText().toString();
+        String content = contentEditText.getText().toString();
+        String date = dateEditText.getText().toString();
+
+        // 構建分享內容
+        String diaryText = "日記標題: " + title + "\n" +
+                "日期: " + date + "\n" +
+                "內容: \n" + content;
+
+        // 檢查是否有圖片
+        if (selectedImagePath != null) {
+            File imageFile = new File(selectedImagePath);
+
+            // 使用 FileProvider 生成可分享的 URI
+            Uri imageUri = FileProvider.getUriForFile(this, "com.example.diaryapp.fileprovider", imageFile);
+
+            // 創建 Bitmap 來載入原始圖片
+            Bitmap originalBitmap = BitmapFactory.decodeFile(selectedImagePath);
+
+            // 創建新的 Bitmap，將原始圖片和文字結合
+            Bitmap combinedBitmap = combineImageAndText(originalBitmap, diaryText);
+
+            // 創建文件來保存合併後的圖片
+            File combinedImageFile = new File(getFilesDir(), "combined_image.jpg");
+            try (FileOutputStream out = new FileOutputStream(combinedImageFile)) {
+                combinedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "無法保存合併圖片", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 使用 FileProvider 生成新的 URI
+            Uri combinedImageUri = FileProvider.getUriForFile(this, "com.example.diaryapp.fileprovider", combinedImageFile);
+
+            // 建立 Intent 來分享圖片
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/*");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, combinedImageUri);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, diaryText); // 這樣文字也會一同分享
+
+            // 允許其他應用讀取你的圖片
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            // 開啟選擇應用的介面
+            startActivity(Intent.createChooser(shareIntent, "選擇應用程式"));
+        } else {
+            // 如果沒有圖片，則只分享文字
+            shareDiaryText();
+        }
+    }
+
+    private Bitmap combineImageAndText(Bitmap originalBitmap, String text) {
+        // 創建一個與原始圖片相同大小的新的 Bitmap
+        Bitmap combinedBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
+
+        // 創建 Canvas 來將圖片和文字繪製到新的 Bitmap 上
+        Canvas canvas = new Canvas(combinedBitmap);
+
+        // 先將原始圖片畫到畫布上
+        canvas.drawBitmap(originalBitmap, 0, 0, null);
+
+        // 設置文字的樣式
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);  // 白色文字
+        paint.setTextSize(50);  // 設置文字大小
+        paint.setStyle(Paint.Style.FILL);  // 填充樣式
+        paint.setTextAlign(Paint.Align.LEFT);  // 左對齊
+
+        // 設置文字的起始位置
+        float x = 20;
+        float y = originalBitmap.getHeight() - 100;  // 文字距離底部的距離
+
+        // 將文字繪製到畫布上
+        canvas.drawText(text, x, y, paint);
+
+        return combinedBitmap;
     }
 }
 

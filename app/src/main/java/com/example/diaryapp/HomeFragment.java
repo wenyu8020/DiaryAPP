@@ -3,6 +3,7 @@ package com.example.diaryapp;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -27,6 +29,9 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private DiaryViewModel diaryViewModel;
+    private ArrayAdapter<Diary> adapter;
+    private List<Diary> allDiaries = new ArrayList<>(); // 保存所有日記
+    private List<Diary> filteredDiaries = new ArrayList<>(); // 篩選後的日記
 
     @Nullable
     @Override
@@ -35,8 +40,9 @@ public class HomeFragment extends Fragment {
 
         ListView listView = view.findViewById(R.id.diary_list);
         Button addButton = view.findViewById(R.id.add_diary_button);
+        SearchView searchView = view.findViewById(R.id.search_view);
 
-        ArrayAdapter<Diary> adapter = new ArrayAdapter<Diary>(requireContext(), 0, new ArrayList<>()) {
+        adapter = new ArrayAdapter<Diary>(requireContext(), 0, filteredDiaries) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 if (convertView == null) {
@@ -64,6 +70,7 @@ public class HomeFragment extends Fragment {
                 timeText.setText(diary.getDate());
                 noteText.setText(diary.getTitle());
 
+
                 return convertView;
             }
         };
@@ -71,9 +78,9 @@ public class HomeFragment extends Fragment {
 
         diaryViewModel = new ViewModelProvider(this).get(DiaryViewModel.class);
         diaryViewModel.getAllDiaries().observe(getViewLifecycleOwner(), diaries -> {
-            adapter.clear();
-            adapter.addAll(diaries);
-            adapter.notifyDataSetChanged();
+            allDiaries.clear();
+            allDiaries.addAll(diaries);
+            filterDiaries(searchView.getQuery().toString());
         });
 
         addButton.setOnClickListener(v -> {
@@ -88,6 +95,31 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
+        // 搜尋功能
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterDiaries(newText);
+                return true;
+            }
+        });
+
         return view;
+    }
+
+    // 根據搜尋條件篩選日記
+    private void filterDiaries(String query) {
+        filteredDiaries.clear();
+        for (Diary diary : allDiaries) {
+            if (TextUtils.isEmpty(query) || diary.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                filteredDiaries.add(diary);
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 }

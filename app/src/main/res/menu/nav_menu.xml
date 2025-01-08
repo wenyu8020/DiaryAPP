@@ -17,11 +17,6 @@
             android:title="Setting"/>
 
         <item
-            android:id="@+id/nav_search"
-            android:icon="@drawable/nav_search"
-            android:title="Search"/>
-
-        <item
             android:id="@+id/nav_pomodoro"
             android:icon="@drawable/nav_pomodoro"
             android:title="Pomodoro"/>
@@ -30,11 +25,6 @@
             android:id="@+id/nav_reminder"
             android:icon="@drawable/nav_reminder"
             android:title="Reminder"/>
-
-        <item
-            android:id="@+id/nav_share"
-            android:icon="@drawable/nav_share"
-            android:title="Share"/>
     </group>
 
     <item
