@@ -50,6 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="輸入姓名"
+            android:textColor="@color/black"
             android:padding="12dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/edittext_background" />
@@ -71,6 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="輸入生日 (YYYY-MM-DD)"
+            android:textColor="@color/black"
             android:padding="12dp"
             android:inputType="date"
             android:layout_marginTop="8dp"
